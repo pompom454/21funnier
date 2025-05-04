@@ -124,9 +124,9 @@ function png(id) {
     return a;
 }
 var
-    pngs = undefined,
-    mp3s = undefined,
-    mp4s = undefined,
+    pngs = 100,
+    mp3s = 100,
+    mp4s = 100,
     space = 0,
     pause = false;
 document.onkeypressed = (e) => {
