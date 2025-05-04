@@ -126,7 +126,7 @@ function mp4(file, ctx2) {
             (function loop() {
                 if (!$this.paused && !$this.ended) {
                     ctx2.drawImage($this, x, y, w, h);
-                    setTimeout(loop, 1000 / 30);
+                    setTimeout(loop, 500 / 30);
                 }
             })();
         })
