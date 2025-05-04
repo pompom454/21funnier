@@ -33,22 +33,26 @@ async function loadFiles() {
 
 function start() {
     document.body.innerHTML = `<canvas style="position:fixed;top:0px;left:0px;" width="${innerWidth}" height="${innerHeight}" id="canvas"></canvas><canvas style="position:fixed;top:0px;left:0px;" width="${innerWidth}" height="${innerHeight}" id="canvas2"></canvas><canvas style="position:fixed;top:0px;left:0px;" width="${innerWidth}" height="${innerHeight}" id="canvas3"></canvas>`;
-    ctx = document.getElementById("canvas").getContext("2d");
-    ctx3 = document.getElementById("canvas3").getContext("2d");
+    const ctx = document.getElementById("canvas").getContext("2d");
+    const ctx2 = document.getElementById("canvas2").getContext("2d");
+    const ctx3 = document.getElementById("canvas3").getContext("2d");
+
     setInterval(() => {
         if (!pause && mp3s.length > 0) {
             play(mp3s[Math.floor(Math.random() * mp3s.length)]);
         }
     }, 200);
+
     setInterval(() => {
         if (!pause && pngs.length > 0) {
             let i = 0, poopoo = Math.round(Math.random() * 5);
             while (i < poopoo) {
                 let a = png(pngs[Math.floor(Math.random() * pngs.length)]),
-                    x = Math.random() * innerWidth,
-                    y = Math.random() * innerHeight,
-                    w = Math.random() > 0.5 ? innerWidth : innerWidth / 2,
-                    h = Math.random() > 0.5 ? innerHeight : innerHeight / 2;
+                    g = Math.random(),
+                    x = g > 0.75 ? 0 : innerWidth / 4,
+                    y = g > 0.75 ? 0 : innerHeight / 4,
+                    w = g > 0.75 ? innerWidth : innerWidth / 2,
+                    h = g > 0.75 ? innerHeight : innerHeight / 2;
                 a.onload = () => {
                     ctx.drawImage(a, x, y, w, h);
                 }
@@ -56,18 +60,19 @@ function start() {
             }
         }
     }, 500);
-    ctx2 = document.getElementById("canvas2").getContext("2d");
+
     setInterval(() => {
         if (!pause && mp4s.length > 0) {
-            mp4(mp4s[Math.floor(Math.random() * mp4s.length)]);
+            mp4(mp4s[Math.floor(Math.random() * mp4s.length)], ctx2);
         }
     }, 1000);
+
     setInterval(() => {
         if (pause) {
             ctx3.font = "Arial 20px";
             ctx3.fillStyle = "#000000";
             ctx3.fillRect(0, 0, innerWidth, innerHeight);
-            ctx3.fillText("Paused", 0, innerHeight - 20);
+            ctx3.fillText("Paused", innerWidth / 2 - 50, innerHeight / 2);
         } else {
             ctx3.clearRect(0, 0, innerWidth, innerHeight);
         }
@@ -91,12 +96,12 @@ function play(file) {
         .catch(error => console.log(error));
 }
 
-function mp4(file) {
+function mp4(file, ctx2) {
     let vid = document.createElement("video");
-    let x = Math.random() * innerWidth,
-        y = Math.random() * innerHeight,
-        w = Math.random() > 0.5 ? innerWidth : innerWidth / 2,
-        h = Math.random() > 0.5 ? innerHeight : innerHeight / 2;
+    let x = 0,
+        y = 0,
+        w = innerWidth / 2,
+        h = innerHeight / 2;
     vid.src = file;
     vid.autoplay = false;
     vid.paused = true;
