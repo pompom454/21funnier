@@ -1,118 +1,171 @@
-const repoOwner = "pompom454";
-const repoName = "21funnier";
-const baseUrl = `https://api.github.com/repos/${repoOwner}/${repoName}/contents/`;
+// Global Variables
+let mp3s = [];
+let mp4s = [];
+let pngs = [];
+let space = 0;
+let pause = false;
 
-let assets = { pngs: [], gifs: [], mp4s: [], mp3s: [] };
+// Function to fetch all files from a GitHub directory
+async function fetchFilesFromGitHub(endpoint) {
+    const response = await fetch(endpoint, {
+        headers: { Accept: 'application/vnd.github.v3+json' },
+    });
+    const data = await response.json();
 
-// Fetch files from a directory in the repository
-function fetchFilesFromDirectory(directory, type) {
-    fetch(baseUrl + directory)
-        .then((response) => {
-            if (!response.ok) throw new Error("Failed to fetch " + type);
-            return response.json();
-        })
-        .then((data) => {
-            data.forEach((file) => {
-                if (file.type === "file" && file.name.endsWith(type)) {
-                    assets[directory].push(file.download_url);
-                }
-            });
-            console.log(`${directory} loaded:`, assets[directory]);
-        })
-        .catch((error) => {
-            console.error(error);
-        });
+    if (Array.isArray(data)) {
+        return data.map(file => file.download_url); // Get direct download URL
+    }
+    return [];
 }
 
-// Load all asset types
-function loadAssets() {
-    fetchFilesFromDirectory("pngs", ".png");
-    fetchFilesFromDirectory("gifs", ".gif");
-    fetchFilesFromDirectory("mp4s", ".mp4");
-    fetchFilesFromDirectory("mp3s", ".mp3");
+// Function to load all .mp3, .mp4, and .png files
+async function loadFiles() {
+    try {
+        const baseUrl = 'https://api.github.com/repos/pompom454/21funnier/contents';
+        const ref = '?ref=main';
+
+        const mp3Files = await fetchFilesFromGitHub(`${baseUrl}/mp3s${ref}`);
+        const mp4Files = await fetchFilesFromGitHub(`${baseUrl}/mp4s${ref}`);
+        const pngFiles = await fetchFilesFromGitHub(`${baseUrl}/pngs${ref}`);
+
+        mp3s = mp3Files;
+        mp4s = mp4Files;
+        pngs = pngFiles;
+
+        console.log('Loaded files:', { mp3s, mp4s, pngs });
+    } catch (error) {
+        console.error('Error loading files:', error);
+    }
 }
 
-// Function to get a random item from an array
-function getRandomItem(array) {
-    return array[Math.floor(Math.random() * array.length)];
-}
-
-// Use assets (example: for PNGs and GIFs)
-function displayRandomImage() {
-    const imageUrls = [...assets.pngs, ...assets.gifs];
-    if (imageUrls.length === 0) return;
-
-    const randomUrl = getRandomItem(imageUrls);
-    const img = new Image();
-    img.src = randomUrl;
-    img.onload = () => {
-        const ctx = document.getElementById("canvas").getContext("2d");
-        ctx.clearRect(0, 0, innerWidth, innerHeight); // Clear canvas for rapid-fire effect
-        ctx.drawImage(img, Math.random() * innerWidth, Math.random() * innerHeight, 200, 200);
-    };
-}
-
-// Use assets (example: for MP3s)
-function playRandomAudio() {
-    const audioUrls = assets.mp3s;
-    if (audioUrls.length === 0) return;
-
-    const randomUrl = getRandomItem(audioUrls);
-    const audio = new Audio(randomUrl);
-    audio.playbackRate = Math.random() * 2 + 0.5; // Random playback speed (0.5x to 2.5x)
-    audio.volume = Math.random() * 0.5 + 0.5; // Random volume (50% to 100%)
-    audio.play();
-}
-
-// Use assets (example: for MP4s)
-function playRandomVideo() {
-    const videoUrls = assets.mp4s;
-    if (videoUrls.length === 0) return;
-
-    const randomUrl = getRandomItem(videoUrls);
-    const video = document.createElement("video");
-    video.src = randomUrl;
-    video.autoplay = true;
-    video.loop = false;
-    video.muted = true;
-    video.style.position = "absolute";
-    video.style.width = "200px";
-    video.style.height = "200px";
-    video.style.left = Math.random() * innerWidth + "px";
-    video.style.top = Math.random() * innerHeight + "px";
-    document.body.appendChild(video);
-
-    setTimeout(() => {
-        video.remove();
-    }, 2000); // Remove video after 2 seconds
-}
-
-// Initialize everything
+// Start the application
 function start() {
-    // Load assets from the repository
-    loadAssets();
-
-    // Example usage: Rapid-fire media display
-    setInterval(() => {
-        displayRandomImage();
-    }, 200); // Display images every 200ms
-
-    setInterval(() => {
-        playRandomAudio();
-    }, 300); // Play audio every 300ms
+    document.body.innerHTML = `
+        <canvas style="position:fixed;top:0px;left:0px;" width="${innerWidth}" height="${innerHeight}" id="canvas"></canvas>
+        <canvas style="position:fixed;top:0px;left:0px;" width="${innerWidth}" height="${innerHeight}" id="canvas3"></canvas>
+        <canvas style="position:fixed;top:0px;left:0px;" width="${innerWidth}" height="${innerHeight}" id="canvas2"></canvas>
+    `;
+    ctx = document.getElementById("canvas").getContext("2d");
+    ctx3 = document.getElementById("canvas3").getContext("2d");
 
     setInterval(() => {
-        playRandomVideo();
-    }, 400); // Play videos every 400ms
+        if (!pause && mp3s.length > 0) {
+            play(mp3s[Math.floor(Math.random() * mp3s.length)]);
+        }
+    }, 200); // Reduced interval for faster audio playback
+
+    setInterval(() => {
+        if (!pause && pngs.length > 0) {
+            let i = 0, poopoo = Math.round(Math.random() * 5); // Reduced max images to 5
+            while (i < poopoo) {
+                let a = png(pngs[Math.floor(Math.random() * pngs.length)]),
+                    g = Math.random(),
+                    x = g > 0.75 ? 0 : Math.floor(Math.random() * 2) / 2 * innerWidth,
+                    y = g > 0.75 ? 0 : Math.floor(Math.random() * 2) / 2 * innerHeight,
+                    w = g > 0.75 ? innerWidth : innerWidth / 2,
+                    h = g > 0.75 ? innerHeight : innerHeight / 2;
+                a.onload = () => {
+                    ctx.drawImage(a, x, y, w, h);
+                }
+                i++;
+            }
+        }
+    }, 500); // Reduced interval for faster image updates
+
+    ctx2 = document.getElementById("canvas2").getContext("2d");
+    (anus = function() {
+        if (!pause && mp4s.length > 0) {
+            mp4(mp4s[Math.floor(Math.random() * mp4s.length)], anus);
+        }
+    })();
+
+    setInterval(() => {
+        if (pause) {
+            ctx3.font = "Arial 20px";
+            ctx3.fillStyle = "#000000";
+            ctx3.fillRect(0, 0, innerWidth, innerHeight);
+            ctx3.fillText("Paused", 0, innerHeight - 20);
+        } else {
+            ctx3.clearRect(0, 0, innerWidth, innerHeight);
+        }
+    }, 100); // Added interval to refresh the canvas3
 }
 
-// Attach start function to the button
+function play(file) {
+    let wav = new Audio(file);
+    wav.load();
+    wav.play()
+        .then(() => {
+            wav.preservesPitch = false;
+            wav.playbackRate = Math.random() > 0.5 ? Math.random() * 3.5 : 2; // Increased playback rate
+            let b = Math.random() * Math.min(wav.duration, 5); // Reduced max duration
+            wav.currentTime = Math.random() * (wav.duration - b);
+            setTimeout(() => {
+                wav.pause();
+                wav.src = "";
+            }, (500 + b * 500) / wav.playbackRate); // Reduced base duration
+        })
+        .catch(error => console.log(error));
+}
+
+function mp4(file, callback) {
+    let vid = document.createElement("video");
+    let g = Math.random(),
+        x = g > 0.75 ? 0 : Math.floor(Math.random() * 2) / 2 * innerWidth,
+        y = g > 0.75 ? 0 : Math.floor(Math.random() * 2) / 2 * innerHeight,
+        w = g > 0.75 ? innerWidth : innerWidth / 2,
+        h = g > 0.75 ? innerHeight : innerHeight / 2;
+
+    vid.src = file;
+    vid.autoplay = false;
+    vid.paused = true;
+
+    vid.addEventListener('loadedmetadata', function() {
+        let poo = Math.random() * Math.min(vid.duration, 5); // Reduced max duration
+        this.preservesPitch = false;
+        this.currentTime = Math.random() > 0.5 ? Math.random() * (this.duration - poo) : 1;
+    });
+
+    vid.play()
+        .then(() => {
+            vid.playbackRate = Math.random() * 3.5; // Increased playback rate
+            setTimeout(() => {
+                vid.pause();
+                vid.src = "";
+                ctx2.clearRect(0, 0, innerWidth, innerHeight);
+            }, 5000 / vid.playbackRate); // Reduced base duration
+            let $this = vid; // Cache
+            (function loop() {
+                if (!$this.paused && !$this.ended) {
+                    ctx2.drawImage($this, x, y, w, h);
+                    setTimeout(loop, 1000 / 30); // Drawing at 30fps
+                }
+            })();
+        })
+        .catch(error => console.log(error));
+}
+
+function png(file) {
+    let a = new Image();
+    a.src = file;
+    return a;
+}
+
+// Add key listener for pause functionality
+document.onkeypress = (e) => {
+    if (e.key === " ") { // Space key toggles pause
+        pause = !pause;
+    }
+}
+
+// Load files on page load
+loadFiles();
+
+// Initial HTML
 document.body.innerHTML = `
 <h1>21funnier: the improved humour generation engine (!!!Epilepsy & Earrape Warning!!!)</h1>
 <p>Generates humour (21st century guranteed!) using a bunch of preset assets. It freely mixes these with no regard for anything but being as surprising as possible (to maximize funnyness)</p>
 <h4>Issues:</h4>
-<p>Program goes silent randomly, too lazy to figure out how to solve this to be honest.</p>
-<p>Not enough material</p>
-<button onclick="start()">Begin</button>
-<canvas id="canvas" style="position:fixed;top:0px;left:0px;" width="${innerWidth}" height="${innerHeight}"></canvas>
-`;
+<p>program goes silent randomly, too lazy to figure out how to solve this to be honest.</p>
+<p>not enough material</p>
+<button onclick="start()">Begin</button>`;
