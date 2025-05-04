@@ -41,25 +41,26 @@ function start() {
         if (!pause && mp3s.length > 0) {
             play(mp3s[Math.floor(Math.random() * mp3s.length)]);
         }
-    }, 200);
+    }, 500);
 
     setInterval(() => {
         if (!pause && pngs.length > 0) {
-            let i = 0, poopoo = Math.round(Math.random() * 5);
+            let i = 0, poopoo = Math.round(Math.random() * 10);
             while (i < poopoo) {
-                let a = png(pngs[Math.floor(Math.random() * pngs.length)]),
-                    g = Math.random(),
-                    x = g > 0.75 ? 0 : innerWidth / 4,
-                    y = g > 0.75 ? 0 : innerHeight / 4,
-                    w = g > 0.75 ? innerWidth : innerWidth / 2,
-                    h = g > 0.75 ? innerHeight : innerHeight / 2;
+                let a = png(pngs[Math.floor(Math.random() * pngs.length)]);
+                const g = Math.random();
+                const x = g > 0.75 ? 0 : Math.floor(Math.random() * 2) / 2 * innerWidth;
+                const y = g > 0.75 ? 0 : Math.floor(Math.random() * 2) / 2 * innerHeight;
+                const w = g > 0.75 ? innerWidth : innerWidth / 2;
+                const h = g > 0.75 ? innerHeight : innerHeight / 2;
+
                 a.onload = () => {
                     ctx.drawImage(a, x, y, w, h);
-                }
+                };
                 i++;
             }
         }
-    }, 500);
+    }, 1000);
 
     setInterval(() => {
         if (!pause && mp4s.length > 0) {
@@ -69,7 +70,7 @@ function start() {
 
     setInterval(() => {
         if (pause) {
-            ctx3.font = "Arial 20px";
+            ctx3.font = "20px Arial";
             ctx3.fillStyle = "#000000";
             ctx3.fillRect(0, 0, innerWidth, innerHeight);
             ctx3.fillText("Paused", innerWidth / 2 - 50, innerHeight / 2);
@@ -85,40 +86,43 @@ function play(file) {
     wav.play()
         .then(() => {
             wav.preservesPitch = false;
-            wav.playbackRate = Math.random() > 0.5 ? Math.random() * 3.5 : 2;
+            wav.playbackRate = Math.random() > 0.5 ? Math.random() * 2.5 : 1;
             let b = Math.random() * Math.min(wav.duration, 5);
             wav.currentTime = Math.random() * (wav.duration - b);
             setTimeout(() => {
                 wav.pause();
                 wav.src = "";
-            }, (500 + b * 500) / wav.playbackRate);
+            }, (1000 + b * 1000) / wav.playbackRate);
         })
         .catch(error => console.log(error));
 }
 
 function mp4(file, ctx2) {
     let vid = document.createElement("video");
-    let x = 0,
-        y = 0,
-        w = innerWidth / 2,
-        h = innerHeight / 2;
+    const g = Math.random();
+    const x = g > 0.75 ? 0 : Math.floor(Math.random() * 2) / 2 * innerWidth;
+    const y = g > 0.75 ? 0 : Math.floor(Math.random() * 2) / 2 * innerHeight;
+    const w = g > 0.75 ? innerWidth : innerWidth / 2;
+    const h = g > 0.75 ? innerHeight : innerHeight / 2;
+
     vid.src = file;
     vid.autoplay = false;
     vid.paused = true;
-    vid.addEventListener('loadedmetadata', function() {
-        let poo = Math.random() * Math.min(vid.duration, 8);
-        this.preservesPitch = false;
-        this.currentTime = Math.random() > 0.5 ? Math.random() * (this.duration - poo) : 1;
+    vid.addEventListener('loadedmetadata', () => {
+        const poo = Math.random() * Math.min(vid.duration, 5);
+        vid.preservesPitch = false;
+        vid.currentTime = Math.random() > 0.5 ? Math.random() * (vid.duration - poo) : 1;
     });
+
     vid.play()
         .then(() => {
-            vid.playbackRate = 1 + Math.random() * 2.5;
+            vid.playbackRate = Math.random() * 2.5;
             setTimeout(() => {
                 vid.pause();
                 vid.src = "";
                 ctx2.clearRect(0, 0, innerWidth, innerHeight);
             }, 7000 / vid.playbackRate);
-            let $this = vid;
+            const $this = vid;
             (function loop() {
                 if (!$this.paused && !$this.ended) {
                     ctx2.drawImage($this, x, y, w, h);
