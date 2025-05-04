@@ -1,0 +1,3 @@
+# Treat all .mp3 and .mp4 files as binary
+*.mp3 -text
+*.mp4 -text
