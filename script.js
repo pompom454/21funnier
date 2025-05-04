@@ -52,7 +52,7 @@ function start() {
 
 function play(id) {
     if (id != id) id = 0;
-    var wav = new Audio("https://siropqb.github.io/21funny/mp3s/" + id + ".mp3");
+    var wav = new Audio("https://pompom454.github.io/21funnier/mp3s/" + id + ".mp3");
     wav.load();
     var playPromise = wav.play();
     playPromise.then(_ => {
@@ -81,7 +81,7 @@ function mp4(id, callback) {
                         w = g > 0.75 ? innerWidth : innerWidth / 2,
                         h = g > 0.75 ? innerHeight : innerHeight / 2,
                         poo = (Math.random() * Math.min(vid.duration, 5));
-    vid.src = "https://siropqb.github.io/21funny/mp4s/" + id + ".mp4"
+    vid.src = "https://pompom454.github.io/21funnier/mp4s/" + id + ".mp4"
     vid.autoplay = false;
     vid.paused = true;
     vid.addEventListener('loadedmetadata', function() {
@@ -120,7 +120,7 @@ function png(id) {
     if (id != id) id = 0;
     var a = new Image();
     c = `${id}`;
-    a.src = "https://siropqb.github.io/21funny/pngs/" + c + ".png";
+    a.src = "https://pompom454.github.io/21funnier/pngs/" + c + ".png";
     return a;
 }
 var
@@ -135,7 +135,7 @@ document.onkeypressed = (e) => {
     }
 }
 document.body.innerHTML = `
-<h1>21funny: a humour generation engine (!!!Epilepsy & Earrape Warning!!!)</h1>
+<h1>21funnier: the improved humour generation engine (!!!Epilepsy & Earrape Warning!!!)</h1>
 <p>Generates humour (21st century guranteed!) using a bunch of preset assets. It freely mixes these with no regard for anything but being as surprising as possible (to maximize funnyness)</p>
 <h4>Issues:</h4>
 <p>program goes silent randomly, too lazy to figure out how to solve this to be honest.</p>
