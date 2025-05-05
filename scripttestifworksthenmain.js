@@ -109,14 +109,14 @@ function mp4(file, ctx2) {
     vid.autoplay = false;
     vid.paused = true;
     vid.addEventListener('loadedmetadata', () => {
-        const poo = Math.random() * Math.min(vid.duration, 2);
+        const poo = Math.random() * Math.min(vid.duration, 0.9);
         vid.preservesPitch = false;
         vid.currentTime = Math.random() > 0.5 ? Math.random() * (vid.duration - poo) : 1;
     });
 
     vid.play()
         .then(() => {
-            vid.playbackRate = Math.random() * 0.3;
+            vid.playbackRate = Math.random() * 0.003;
             setTimeout(() => {
                 vid.pause();
                 vid.src = "";
@@ -126,7 +126,7 @@ function mp4(file, ctx2) {
             (function loop() {
                 if (!$this.paused && !$this.ended) {
                     ctx2.drawImage($this, x, y, w, h);
-                    setTimeout(loop, 100 / 30);
+                    setTimeout(loop, 80 / 30);
                 }
             })();
         })
