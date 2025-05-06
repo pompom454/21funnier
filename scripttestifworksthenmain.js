@@ -1,5 +1,5 @@
 let mp3s = [];
-let mp4s = [];
+// let mp4s = [];
 let pngs = [];
 let space = 0;
 let pause = false;
@@ -20,10 +20,10 @@ async function loadFiles() {
         const baseUrl = 'https://api.github.com/repos/pompom454/21funnier/contents';
         const ref = '?ref=main';
         const mp3Files = await fetchFilesFromGitHub(`${baseUrl}/mp3s${ref}`);
-        const mp4Files = await fetchFilesFromGitHub(`${baseUrl}/mp4s${ref}`);
-        // const pngFiles = await fetchFilesFromGitHub(`${baseUrl}/pngs${ref}`);
+        // const mp4Files = await fetchFilesFromGitHub(`${baseUrl}/mp4s${ref}`);
+        const pngFiles = await fetchFilesFromGitHub(`${baseUrl}/pngs${ref}`);
         mp3s = mp3Files;
-        mp4s = mp4Files;
+        // mp4s = mp4Files;
         pngs = pngFiles;
         console.log('Loaded files:', { mp3s, mp4s, pngs });
     } catch (error) {
@@ -62,11 +62,11 @@ function start() {
         }
     }, 1000);
 
-    setInterval(() => {
-        if (!pause && mp4s.length > 0) {
-            mp4(mp4s[Math.floor(Math.random() * mp4s.length)], ctx2);
-        }
-    }, 1000);
+    // setInterval(() => {
+        // if (!pause && mp4s.length > 0) {
+            // mp4(mp4s[Math.floor(Math.random() * mp4s.length)], ctx2);
+        // }
+    // }, 1000);
 
     setInterval(() => {
         if (pause) {
@@ -97,41 +97,41 @@ function play(file) {
         .catch(error => console.log(error));
 }
 
-function mp4(file, ctx2) {
-    let vid = document.createElement("video");
-    const g = Math.random();
-    const x = g > 0.75 ? 0 : Math.floor(Math.random() * 2) / 2 * innerWidth;
-    const y = g > 0.75 ? 0 : Math.floor(Math.random() * 2) / 2 * innerHeight;
-    const w = g > 0.75 ? innerWidth : innerWidth / 2;
-    const h = g > 0.75 ? innerHeight : innerHeight / 2;
+// function mp4(file, ctx2) {
+    // let vid = document.createElement("video");
+    // const g = Math.random();
+    // const x = g > 0.75 ? 0 : Math.floor(Math.random() * 2) / 2 * innerWidth;
+    // const y = g > 0.75 ? 0 : Math.floor(Math.random() * 2) / 2 * innerHeight;
+    // const w = g > 0.75 ? innerWidth : innerWidth / 2;
+    // const h = g > 0.75 ? innerHeight : innerHeight / 2;
 
-    vid.src = file;
-    vid.autoplay = false;
-    vid.paused = true;
-    vid.addEventListener('loadedmetadata', () => {
-        const poo = Math.random() * Math.min(vid.duration, 0.9);
-        vid.preservesPitch = false;
-        vid.currentTime = Math.random() > 0.5 ? Math.random() * (vid.duration - poo) : 1;
-    });
+    // vid.src = file;
+    // vid.autoplay = false;
+    // vid.paused = true;
+    // vid.addEventListener('loadedmetadata', () => {
+        // const poo = Math.random() * Math.min(vid.duration, 0.9);
+        // vid.preservesPitch = false;
+        // vid.currentTime = Math.random() > 0.5 ? Math.random() * (vid.duration - poo) : 1;
+    // });
 
-    vid.play()
-        .then(() => {
-            vid.playbackRate = Math.random() * 0.003;
-            setTimeout(() => {
-                vid.pause();
-                vid.src = "";
-                ctx2.clearRect(0, 0, innerWidth, innerHeight);
-            }, 7000 / vid.playbackRate);
-            const $this = vid;
-            (function loop() {
-                if (!$this.paused && !$this.ended) {
-                    ctx2.drawImage($this, x, y, w, h);
-                    setTimeout(loop, 80 / 30);
-                }
-            })();
-        })
-        .catch(error => console.log(error));
-}
+    // vid.play()
+        // .then(() => {
+            // vid.playbackRate = Math.random() * 0.003;
+            // setTimeout(() => {
+                // vid.pause();
+                // vid.src = "";
+                // ctx2.clearRect(0, 0, innerWidth, innerHeight);
+            // }, 7000 / vid.playbackRate);
+            // const $this = vid;
+            // (function loop() {
+                // if (!$this.paused && !$this.ended) {
+                    // ctx2.drawImage($this, x, y, w, h);
+                    // setTimeout(loop, 80 / 30);
+                // }
+            // })();
+        // })
+        // .catch(error => console.log(error));
+// }
 
 function png(file) {
     let a = new Image();
