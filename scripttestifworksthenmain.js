@@ -21,7 +21,7 @@ async function loadFiles() {
         const ref = '?ref=main';
         const mp3Files = await fetchFilesFromGitHub(`${baseUrl}/mp3s${ref}`);
         const mp4Files = await fetchFilesFromGitHub(`${baseUrl}/mp4s${ref}`);
-        const pngFiles = await fetchFilesFromGitHub(`${baseUrl}/pngs${ref}`);
+        // const pngFiles = await fetchFilesFromGitHub(`${baseUrl}/pngs${ref}`);
         mp3s = mp3Files;
         mp4s = mp4Files;
         pngs = pngFiles;
